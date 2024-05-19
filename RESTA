@@ -1,0 +1,80 @@
+section .data
+    msg db 'Resultado: ', 0
+    num db '0000', 0  ; Reservar espacio para el resultado (hasta 4 dígito)
+
+section .bss
+    res resb 5  ; Buffer para el resultado convertido a cadena (máximo 4 dígitos)
+
+section .text
+    global _start
+
+_start:
+    ; Definir los tres números a restar usando registros de 16 bits
+    mov ax, 20  ; Primer número
+    mov bx, 10 ; Segundo número
+    mov cx, 7   ; Tercer número
+
+    ; Restar los números
+    sub ax, bx  ; AX = AX - BX 
+    sub ax, cx  ; AX = AX - CX 
+
+    ; Convertir el número a una cadena de caracteres (resultado en AX)
+    mov esi, res  
+    xor edi, edi  
+    mov ebx, 10   
+
+    cmp ax, 0    ; Verificar si el resultado es 0
+    je zero_case
+
+convert_loop:
+    xor dx, dx  ; limpiar DX antes de la división
+    div bx      ; dividir AX entre BX, el cociente en AX, el resto en DX
+    add dl, '0' 
+    mov [esi + edi], dl  
+    inc edi       
+    test ax, ax  
+    jnz convert_loop  
+
+    jmp print_result  ; Saltar a la impresión del resultado
+
+zero_case:
+    mov byte [esi], '0'
+    inc edi
+
+print_result:
+    ; Invertir la cadena
+    mov ecx, edi  
+    dec ecx
+    xor edi, edi  
+
+reverse_loop:
+    mov al, [esi + ecx]  
+    mov [num + edi], al 
+    inc edi  
+    dec ecx  
+    jns reverse_loop  
+
+    ; Agregar el terminador nulo
+    mov byte [num + edi], 0
+
+    ; Calcular la longitud del resultado
+    mov edx, edi  ; longitud del resultado
+
+    ; Llamar a la rutina para imprimir el mensaje
+    mov eax, 4   
+    mov ebx, 1  
+    mov ecx, msg   
+    mov edx, 11    ; longitud del mensaje
+    int 0x80     
+
+    ; Llamar a la rutina para imprimir el resultado
+    mov eax, 4  
+    mov ebx, 1  
+    mov ecx, num   
+    mov edx, edi   
+    int 0x80      
+
+    ; Salir del programa
+    mov eax, 1  
+    xor ebx, ebx    
+    int 0x80    
