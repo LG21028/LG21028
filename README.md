@@ -35,8 +35,4 @@ En el caso de la division si pude realizarlo correctamente con 32 bits cumple lo
 Para la ejecucion de misma forma dando "execute" el programa estaria corriendo, en pantalla se muestra la capacidad de espacio para el resultado, teniendo la facilidad de hacer muchas divisiones de 2 enteros.
 
 
-```bash
-docker-compose down
-docker-compose build
-docker-compose up
-```
+
