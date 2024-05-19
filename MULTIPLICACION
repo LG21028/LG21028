@@ -1,0 +1,64 @@
+section .data
+    msg db 'Resultado: ', 0
+    num db '00', 0
+
+section .bss
+    res resb 4  ; buffer para el resultado convertido a cadena
+
+section .text
+    global _start
+
+_start:
+    ; Definir los dos números a multiplicar usando registros de 8 bits
+    mov al, 5  ; Primer número
+    mov bl, 3  ; Segundo número
+
+    ; Multiplicar los números
+    mul bl  ;
+
+    ; Convertir el número a una cadena de caracteres
+    mov ecx, 0  
+    mov ebx, 10  
+
+convert_loop:
+    xor edx, edx 
+    div ebx  
+    add dl, '0'   
+    mov [res + ecx], dl  
+    inc ecx   
+    test eax, eax  
+    jnz convert_loop  
+
+    ; Invertir la cadena
+    mov esi, res  
+    dec ecx 
+    mov edi, num  
+
+reverse_loop:
+    mov al, [esi + ecx]  
+    mov [edi], al  
+    inc edi   
+    dec ecx   
+    jns reverse_loop  
+
+    ; Agregar el terminador nulo
+    mov byte [edi], 0
+
+    ; Llamar a la rutina para imprimir el mensaje
+    mov eax, 4  
+    mov ebx, 1  
+    mov ecx, msg  ; puntero al mensaje   
+    mov edx, 11  ; longitud del mensaje
+    int 0x80  
+
+    ; Llamar a la rutina para imprimir el resultado
+    mov eax, 4  
+    mov ebx, 1  
+    mov ecx, num  
+    mov edx, 2  
+    int 0x80 
+
+    ; Salir del programa
+    mov eax, 1 
+    xor ebx, ebx  
+    int 0x80 
