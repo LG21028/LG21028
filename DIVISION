@@ -1,0 +1,91 @@
+section .data
+    dividend dd 120           ; Entrada del dividiendo
+    divisor  dd 7            ; Entrada del divisor
+    fmt_result db 'Resultado: ', 0
+    fmt_remainder db 'Residuo: ', 0
+
+section .bss
+    result resd 1            ; Reservar espacio para el resultado de la división
+    remainder resd 1         ; Reservar espacio para el residuo de la división
+    result_str resb 12       
+    remainder_str resb 12     
+
+section .text
+    global _start            
+
+_start:
+    ; Cargar los valores del dividendo y divisor en registros
+    mov eax, [dividend]      
+    mov ebx, [divisor]  
+
+    ; Dividir EAX entre EBX
+    cdq                      ; Extiende EAX en EDX:EAX para la división
+    idiv ebx                 ; Divide EDX:EAX entre EBX
+
+    ; Guardar el resultado de la división y el residuo
+    mov [result], eax        ; Guardar el cociente en 'result'
+    mov [remainder], edx     ; Guardar el residuo en 'remainder'
+
+    ; Convertir resultado y residuo a cadenas
+    ; Resultado
+    mov eax, [result]
+    mov edi, result_str
+    call int_to_ascii
+
+    ; Residuo
+    mov eax, [remainder]
+    mov edi, remainder_str
+    call int_to_ascii
+
+    ; Mostrar resultado
+    mov eax, 4               
+    mov ebx, 1               
+    mov ecx, fmt_result      
+    mov edx, 11              
+    int 0x80                 
+
+    mov eax, 4 
+    mov ebx, 1               
+    mov ecx, result_str     
+    mov edx, 12             
+    int 0x80                
+
+    ; Mostrar residuo
+    mov eax, 4               
+    mov ebx, 1               
+    mov ecx, fmt_remainder   
+    mov edx, 9               
+    int 0x80                 
+
+    mov eax, 4                  
+    mov ebx, 1                  
+    mov ecx, remainder_str     
+    mov edx, 12              
+    int 0x80                 
+
+    ; Finalizar el programa
+    mov eax, 1               ; Código del sistema para 'exit'
+    xor ebx, ebx             
+    int 0x80                 
+
+int_to_ascii:
+    
+    ; El puntero de salida está en EDI
+    mov ecx, 10              ; Divisor para obtener dígitos
+    mov esi, edi             
+    add esi, 11              ; Mover al final del buffer
+    mov byte [esi], 0        
+    dec esi
+
+.convert_loop:
+    xor edx, edx             ; Limpiar EDX
+    div ecx                  ; Divide EAX entre 10, cociente en EAX, residuo en EDX
+    add dl, '0'              
+    mov [esi], dl            ; Guardar el carácter
+    dec esi
+    test eax, eax
+    jnz .convert_loop
+
+    inc esi                  
+    mov edi, esi            
+    ret
