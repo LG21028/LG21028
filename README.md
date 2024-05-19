@@ -1,6 +1,6 @@
 > [!NOTE]
-> _Todo el desarrollo del codigo y purebas fueron realizadas en Online Assembler - NASM Compiler IDE._
-> _Tenia un poco de conocimiento en ensamblador e investigue metodos que no hemos profundizado para poder sacar loe ejercicios adelante._
+> _Todo el desarrollo del codigo y purebas fueron realizadas en Online Assembler - NASM Compiler IDE,_
+> _tenia un poco de conocimiento en lenguaje ensamblador e investigue metodos que no hemos profundizado para poder sacar loe ejercicios adelante._
 > _Igualmente senti que al practicar usando estos metodos podria prepararme para un problema complejo en el parcial._
 
 # Estudiante
